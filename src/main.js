@@ -17,41 +17,22 @@ function randomNumberArray(arraySize = 10) {
 function test() {
   let array = randomNumberArray();
   let tree = new Tree(array);
-  tree.prettyPrint(tree.root);
+  tree.prettyPrint();
 
-  // testing insert
-  console.log('Inserting 50');
-  tree.insert(50);
-  tree.prettyPrint(tree.root);
+  console.log('Is tree balanced? ', tree.isBalanced());
 
-  console.log('Inserting 10');
-  tree.insert(10);
-  tree.prettyPrint(tree.root);
+  // insert numbers to make tree unbalanced
+  for (let i = 0; i < 10; i++) {
+    tree.insert(Math.round(Math.random() * 100));
+  }
 
-  // testing deleteNode
-  console.log('Deleting 50');
-  tree.deleteNode(50);
-  tree.prettyPrint(tree.root);
+  console.log('Is tree balanced? ', tree.isBalanced());
 
-  // testing find
-  console.log('Finding 10');
-  console.log(tree.find(10));
+  console.log('Rebalancing tree...');
+  tree.rebalance();
+  tree.prettyPrint();
 
-  // testing levelOrder
-  console.log('Level order traversal');
-  console.log(tree.levelOrder());
-
-  // testing inorder
-  console.log('Inorder traversal');
-  console.log(tree.inorder());
-
-  // testing preorder
-  console.log('Preorder traversal');
-  console.log(tree.preorder());
-
-  // testing postorder
-  console.log('Postorder traversal');
-  console.log(tree.postorder());
+  console.log('Is tree balanced? ', tree.isBalanced());
 }
 
 test();

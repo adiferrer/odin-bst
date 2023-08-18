@@ -2,36 +2,36 @@ import Node from './node.js';
 import mergeSort from './merge-sort.js';
 
 /**
+   * Builds a binary search tree from the given array.
+   * @param {Array} arr - The array to be converted to a binary search tree.
+   * @returns {Object} The root node of the binary search tree.
+   */
+function buildTree(arr) {
+  const sortedArr = mergeSort([...new Set(arr)]);
+
+  const build = (start, end) => {
+    if (start > end) {
+      return null;
+    }
+
+    const middle = Math.floor((start + end) / 2);
+    const node = Node(sortedArr[middle]);
+
+    node.left = build(start, middle - 1);
+    node.right = build(middle + 1, end);
+
+    return node;
+  };
+
+  return build(0, sortedArr.length - 1);
+}
+
+/**
  * Represents a binary search tree.
  * @param {Array} array - Initial values to populate the tree.
  * @returns {Object} Tree object with various methods.
  */
 function Tree(array) {
-  /**
-   * Builds a binary search tree from the given array.
-   * @param {Array} arr - The array to be converted to a binary search tree.
-   * @returns {Object} The root node of the binary search tree.
-   */
-  function buildTree(arr) {
-    const sortedArr = mergeSort([...new Set(arr)]);
-
-    const build = (start, end) => {
-      if (start > end) {
-        return null;
-      }
-
-      const middle = Math.floor((start + end) / 2);
-      const node = Node(sortedArr[middle]);
-
-      node.left = build(start, middle - 1);
-      node.right = build(middle + 1, end);
-
-      return node;
-    };
-
-    return build(0, sortedArr.length - 1);
-  }
-
   let root = buildTree(array);
 
   /**
@@ -40,7 +40,7 @@ function Tree(array) {
    * @param {string} prefix - The prefix for indentation.
    * @param {boolean} isLeft - Indicates if the current node is the left child.
    */
-  const prettyPrint = (node, prefix = '', isLeft = true) => {
+  const prettyPrint = (node = root, prefix = '', isLeft = true) => {
     if (node === null) {
       return;
     }
@@ -287,16 +287,80 @@ function Tree(array) {
     return result;
   };
 
-  const height = (node) => {};
+  /**
+   * Calculates the height of a node in the binary search tree.
+   * @param {Object} node - The node for which to calculate the height.
+   * @returns {number} The height of the node.
+   */
+  const height = (node) => {
+    if (node === null) {
+      return -1;
+    }
 
-  const depth = (node) => {};
+    const leftHeight = height(node.left);
+    const rightHeight = height(node.right);
 
-  const isBalanced = () => {};
+    return Math.max(leftHeight, rightHeight) + 1;
+  };
 
-  const rebalance = () => {};
+  /**
+   * Calculates the depth of a node in the binary search tree.
+   * @param {Object} node - The node for which to calculate the depth.
+   * @returns {number} The depth of the node.
+   */
+  const depth = (node) => {
+    if (node === null) {
+      return -1;
+    }
+
+    let currentNode = root;
+    let currentDepth = 0;
+
+    while (currentNode !== null) {
+      if (node === currentNode) {
+        return currentDepth;
+      } if (node.data < currentNode.data) {
+        currentNode = currentNode.left;
+      } else {
+        currentNode = currentNode.right;
+      }
+      currentDepth++;
+    }
+
+    return -1;
+  };
+
+  /**
+   * Checks if the binary search tree is balanced.
+   * @param {Object} [node=root] - The node to check for balance.
+   * @returns {boolean} True if the tree is balanced, false otherwise.
+   */
+  const isBalanced = (node = root) => {
+    if (node === null) {
+      return true; // Empty subtree is balanced
+    }
+
+    const leftHeight = height(node.left);
+    const rightHeight = height(node.right);
+    const heightDifference = Math.abs(leftHeight - rightHeight);
+
+    return heightDifference <= 1 && isBalanced(node.left) && isBalanced(node.right);
+  };
+
+  /**
+   * Rebalances an unbalanced binary search tree.
+   */
+  const rebalance = () => {
+    const values = [];
+
+    inorder((node) => values.push(node.data));
+    // console.log('Collected values: ', values);
+
+    root = buildTree(values);
+    // console.log(root)
+  };
 
   return {
-    root,
     prettyPrint,
     insert,
     deleteNode,
@@ -305,6 +369,10 @@ function Tree(array) {
     inorder,
     preorder,
     postorder,
+    height,
+    depth,
+    isBalanced,
+    rebalance,
   };
 }
 
